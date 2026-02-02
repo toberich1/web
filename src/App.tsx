@@ -226,7 +226,7 @@ export default function App() {
 
     // 注意：建議在 Vercel 後台設定環境變數 VITE_GEMINI_API_KEY，而不是寫死在這裡
     // 如果您在 Vercel 設定了環境變數，請使用 import.meta.env.VITE_GEMINI_API_KEY
-    const apiKey = ""; 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
 
     const systemPrompt = `
       You are Hermione, an expert party stylist for a rental shop called "Hermione's Party Library".
