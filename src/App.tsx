@@ -208,7 +208,7 @@ export default function App() {
     setAiLoading(true);
     setAiPlan(null);
 
-    const apiKey = ""; // API key injected by environment
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     const systemPrompt = `
       You are Hermione, an expert party stylist for a rental shop called "Hermione's Party Library".
       We have the following inventory: ${JSON.stringify(
