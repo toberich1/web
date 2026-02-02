@@ -224,9 +224,11 @@ export default function App() {
     setAiLoading(true);
     setAiPlan(null);
 
-    // 注意：建議在 Vercel 後台設定環境變數 VITE_GEMINI_API_KEY，而不是寫死在這裡
-    // 如果您在 Vercel 設定了環境變數，請使用 import.meta.env.VITE_GEMINI_API_KEY
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
+    // 您的環境為 Create React App (TS1343錯誤)，因此不支援 import.meta.env (Vite專用)
+    // 請改用 process.env 寫法，並確保在 Vercel 環境變數中使用 REACT_APP_ 開頭
+    // 例如：變數名 REACT_APP_GEMINI_API_KEY
+    // 用法：const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
+    const apiKey = process.env.REACT_APP_GEMINI_API_KEY; 
 
     const systemPrompt = `
       You are Hermione, an expert party stylist for a rental shop called "Hermione's Party Library".
