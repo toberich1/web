@@ -201,11 +201,22 @@ export default function App() {
   // 加入泛型 <AIPlan | null>
   const [aiPlan, setAiPlan] = useState<AIPlan | null>(null);
 
-  // 自動載入 Tailwind CSS (解決 CodeSandbox 樣式遺失問題)
+  // 修復手機版樣式與 Tailwind 載入問題
   useEffect(() => {
-    const existingScript = document.querySelector('script[src="https://cdn.tailwindcss.com"]');
-    if (!existingScript) {
+    // 1. 強制設定 Viewport (解決手機版縮放跑版問題)
+    const existingMeta = document.querySelector('meta[name="viewport"]');
+    if (!existingMeta) {
+      const meta = document.createElement('meta');
+      meta.name = "viewport";
+      meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+      document.head.appendChild(meta);
+    }
+
+    // 2. 載入 Tailwind CSS (確保樣式生效)
+    const scriptId = 'tailwind-script';
+    if (!document.getElementById(scriptId)) {
       const script = document.createElement('script');
+      script.id = scriptId;
       script.src = "https://cdn.tailwindcss.com";
       script.async = true;
       document.head.appendChild(script);
@@ -224,11 +235,23 @@ export default function App() {
     setAiLoading(true);
     setAiPlan(null);
 
-    // 您的環境為 Create React App (TS1343錯誤)，因此不支援 import.meta.env (Vite專用)
-    // 請改用 process.env 寫法，並確保在 Vercel 環境變數中使用 REACT_APP_ 開頭
-    // 例如：變數名 REACT_APP_GEMINI_API_KEY
-    // 用法：const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
-    const apiKey = process.env.REACT_APP_GEMINI_API_KEY; 
+    // 取得 API Key (加入防呆機制，避免環境不支援 process 時報錯)
+    let apiKey = "";
+    try {
+      // 優先嘗試讀取 Vercel 設定的環境變數 (Create React App 模式)
+      if (typeof process !== 'undefined' && process.env) {
+         apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
+      }
+    } catch (e) {
+      console.warn("Env variable read failed, falling back to empty key");
+    }
+    
+    // 如果沒有 Key，提示使用者
+    if (!apiKey) {
+      alert("API Key 尚未設定！請確認 Vercel 環境變數 REACT_APP_GEMINI_API_KEY 已正確填入。");
+      setAiLoading(false);
+      return;
+    }
 
     const systemPrompt = `
       You are Hermione, an expert party stylist for a rental shop called "Hermione's Party Library".
